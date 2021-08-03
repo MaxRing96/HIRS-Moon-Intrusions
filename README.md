@@ -3,8 +3,8 @@ A collection of Jupyter Notebooks and Python scripts to search HIRS data for moo
 
 Note: 
 - To be able to run the scripts with their dependencies you should work on thunder.
-- For questions concerning the physical and technical theory behind the detection of moon intrusions in HIRS data, please contact Martin Burgdorf (martin.joerg.burgdorf@uni-hamburg.de)
-- For questions/problems concerning the code etc. feel free to contact me (Maximilian Ringel - maximilian.ringel@studium.uni-hamburg.de) 
+- For questions concerning the physical and technical theory behind the detection of moon intrusions in HIRS data, please contact Martin Burgdorf (martin.joerg.burgdorf@uni-hamburg.de).
+- For questions/problems concerning the code etc. feel free to contact me (Maximilian Ringel - maximilian.ringel@studium.uni-hamburg.de). 
 
 ## 1) hirs_find_moon_intrusions.ipynb
 To search given HIRS data for moon intrusions you can use the jupyter notebook *hirs_find_moon_intrusions.ipynb*.
