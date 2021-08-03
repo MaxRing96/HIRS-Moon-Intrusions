@@ -2,7 +2,7 @@
 A collection of Jupyter Notebooks and Python scripts to search HIRS data for moon intrusions.
 
 Note: 
-- To be able to run the scripts with their dependencies you should work on thunder.
+- To be able to run the scripts with their dependencies you should work on thunder. 
 - For questions concerning the physical and technical theory behind the detection of moon intrusions in HIRS data, please contact Martin Burgdorf (martin.joerg.burgdorf@uni-hamburg.de).
 - For questions/problems concerning the code etc. feel free to contact me (Maximilian Ringel - maximilian.ringel@studium.uni-hamburg.de). 
 
@@ -19,6 +19,8 @@ If there were any possible moon intrusions found in the data, the script will sa
 With the last code-cell you can plot all the detected moon intrusions as plots like this example:
 
 <img width="1152" alt="Screenshot 2021-08-03 at 13 02 17" src="https://user-images.githubusercontent.com/62293752/128007264-8a6fe7b7-cdee-46c7-8720-5b6ff51267fd.png">
+  
+All the plots of the moon intrusions are saved under the directory *hirs_moon_intrusion_suspects_plots/* which will be created in your local directory if it doesn't exist already.
 
 To further investigate one of the detected intrusions, you just need the corresponding path to the HIRS file (PATH-TO-TO-INTRUSION-FILE) to continue with step 2) and 3).
   
