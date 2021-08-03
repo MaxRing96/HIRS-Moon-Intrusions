@@ -15,7 +15,7 @@ If there were any possible moon intrusions found in the data, the script will sa
   
 With the last code cell you can plot all the detected moon intrusions. 
   
-[hirs_noaa15_channel4_dsv_moon_intrusion_2005-11-16_19:47:21.pdf](https://github.com/MaxRing96/HIRS-Moon-Intrusions/files/6923543/hirs_noaa15_channel4_dsv_moon_intrusion_2005-11-16_19.47.21.pdf)
+![hirs_noaa15_channel4_dsv_moon_intrusion_2005-11-16_19:47:21.pdf](https://github.com/MaxRing96/HIRS-Moon-Intrusions/files/6923543/hirs_noaa15_channel4_dsv_moon_intrusion_2005-11-16_19.47.21.pdf)
 
   
 To further investigate one of the detected intrusions, you just need the corresponding path to the HIRS file (PATH-TO-TO-INTRUSION-FILE) to continue with step 2) and 3).
