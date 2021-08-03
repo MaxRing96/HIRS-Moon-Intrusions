@@ -4,7 +4,7 @@ A collection of Jupyter Notebooks and Python scripts to search HIRS data for moo
 Note: To be able to run the scripts with their dependencies you should work on thunder.
 
 ## 1) hirs_find_moon_intrusions.ipynb
-To search given HIRS data for moon intrusions you can use the jupyter notebook hirs_find_moon_intrusions.ipynb.
+To search given HIRS data for moon intrusions you can use the jupyter notebook *hirs_find_moon_intrusions.ipynb*.
 To do that you specify the satellite name and the channel number as well as the time span for your search in the second code cell of the notebook.
 After that you just run the next two code cells and the script will start the search for moon intrusions via a gradient method. 
 
