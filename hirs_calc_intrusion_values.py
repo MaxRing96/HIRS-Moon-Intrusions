@@ -50,6 +50,7 @@ except FileNotFoundError:
     raise
     
 # set up empty lists for data storage
+ch_central_waves = []
 intrusion_range_all = []
 dsv_counts_mean_all = []
 dsv_counts_std_all = []
@@ -117,6 +118,7 @@ for j in range(0,len(CHANNELS)):
         sat_meta_data = pd.read_csv(f'meta_files/meta_{SATELLITE}.txt', comment='#').set_index('channel')
 
         ch_wavenumber = sat_meta_data.loc[CHANNELS[j]]['wavenumber']
+        ch_central_waves.append(ch_wavenumber)
         corr_fac1 = sat_meta_data.loc[CHANNELS[j]]['correction_factor1']
         corr_fac2 = sat_meta_data.loc[CHANNELS[j]]['correction_factor2']
 
@@ -138,7 +140,8 @@ longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 # build dictionary with calculated data
 data = {
     'channel': CHANNELS,
-    'intrusion_scan-range': intrusion_range_all,
+    'central_wavenumber' : ch_central_waves,
+    'intrusion_scan_range': intrusion_range_all,
     'bb_temp_mean': round(bb_temp_mean,4),
     'bb_temp_std': round(bb_temp_std,4),
     'moon_counts_mean': moon_counts_mean_all,
@@ -174,9 +177,18 @@ print('Calculation results:')
 print('')
 print(df)
 print('')
-print('****************')
-print('All calculations finished!')
 print(f'Output saved to:    {PATH+FILENAME}')
+print('****************')
 print('')
-
+print("Now go to Horizon webpage https://ssd.jpl.nasa.gov/horizons.cgi and get the angular diameter and the phase angle of the moon.")
+print('')
+print("You will need the following input variables:")
+print("Ephemeris Type: OBSERVER")
+print("Target Body: Moon[Luna][301]")
+print("Observer Location: Topocentric (lon, lat, alt): ", (df.longitude[1], df.latitude[1], df.altitude[1]))
+print('Time span: Date of intrusion "',date_of_intrusion, intrusion_timestamp, '", "Date_of_intrusion+1min", Step=1m')
+print("Table Settings: QUANTITIES= 13 (Target angular diamenter), 24 (Sun-Target-Observer ~PHASE angle)")
+print("Display/Output: default")
+print('****************')
+print("")
 #EOF
