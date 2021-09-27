@@ -121,6 +121,7 @@ for j in range(0,len(CHANNELS)):
         ch_central_waves.append(ch_wavenumber)
         corr_fac1 = sat_meta_data.loc[CHANNELS[j]]['correction_factor1']
         corr_fac2 = sat_meta_data.loc[CHANNELS[j]]['correction_factor2']
+        fov = sat_meta_data.loc[CHANNELS[j]]['fov']
 
         bb_radiance = src.calc_bb_flux(ch_wavenumber*10**2,\
         [corr_fac1,corr_fac2],bb_temp_mean)
@@ -141,6 +142,7 @@ longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 data = {
     'channel': CHANNELS,
     'central_wavenumber' : ch_central_waves,
+    'fov': fov,
     'intrusion_scan_range': intrusion_range_all,
     'bb_temp_mean': round(bb_temp_mean,4),
     'bb_temp_std': round(bb_temp_std,4),

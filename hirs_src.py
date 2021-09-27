@@ -1,11 +1,12 @@
 import numpy as np
 import typhon
 import typhon.datasets.tovs
+from typhon.physics import planck_wavenumber, radiance2planckTb
 
 # set up the fitting hirs data handler (for HIRS2, HIRS3 or HIRS4)
 # for given satellite name
 def get_hirs_reader(satellite_name):
-    if satellite_name in ['noaa10','noaa11','noaa12','noaa14']:
+    if satellite_name in ['tirosn','noaa06','noaa07','noaa08','noaa09','noaa10','noaa11','noaa12','noaa13','noaa14']:
         print('instrument: HIRS2')
         read_hirs = typhon.datasets.tovs.HIRS2(satname=satellite_name)
     elif satellite_name in ['noaa15','noaa16','noaa17']:
