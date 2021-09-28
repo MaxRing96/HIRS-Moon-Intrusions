@@ -60,6 +60,7 @@ for i in range(0,5):
     # scanline with the minimum average of counts:
     timeindex_of_intrusion = counts.mean(dim="scanpos").argmin()
     scanline_of_intrusion_counts = counts.isel(time=timeindex_of_intrusion)
+
     
     # retrieve the scan time of the intrusion to use it in the 
     # plot title and filename
@@ -232,12 +233,52 @@ fig.tight_layout(pad=1.2,w_pad=0)
 
 # set path to which the plot should be saved to
 # default path: local dircetory
-PATH = f''
+PATH = 'hirs_moon_intrusion_suspects_plots/'
 FILE = f'hirs_moon_intrusion_{SATELLITE}_{date_of_intrusion}_{scan_time}_allchannels_dsv.pdf'
 plt.savefig(PATH+FILE,bbox_inches='tight')
+
+
+# set up hirs channels 1-19
+CHANNELS = np.arange(1,20)
+# loop through all channels
+for j in range(0,len(CHANNELS)):
+
+    # read in counts of all deep-space-view (dsv) & 
+    # blackbody-target (bb) scanlines for channel j
+    counts_scanlines = ds[{"time":ds["scantype"]==1}]["counts"].sel(
+        scanpos=range(10,56),
+        channel=CHANNELS[j])
+    counts_scanlines_bb = ds[{"time":ds["scantype"]==3}]["counts"].sel(
+        scanpos=range(10,56),
+        channel=CHANNELS[j])
+
+    # find index and timestamp of scanline with minimum mean dsv counts
+    # (= scnanline of moon intrusion)
+    intrusion_timeindex = counts_scanlines.mean(dim="scanpos").argmin()
+    intrusion_timestamp = str(counts_scanlines.isel(
+        time=intrusion_timeindex).time.values)[11:19]
+
+# get 3D position of the satellite
+longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 
 print('\n**************')
 print('Plot saved to: ',PATH+FILE)
 print('')
-
+print('You can adjust the ranges of the suspected moon intrusion in the file "config_intr_scan_ranges.txt".')
+print('')
+print('****************')
+print('')
+print("Next step is to go to Horizon webpage https://ssd.jpl.nasa.gov/horizons.cgi and get the ANGULAR DIAMETER and the PHASE ANGLE of the moon.")
+print('')
+print("You will need the following input variables:")
+print("Ephemeris Type: OBSERVER")
+print("Target Body: Moon[Luna][301]")
+print("Observer Location: Topocentric (lon, lat, alt): ", longitude, latitude, altitude)
+print('Time span: Date of intrusion "',date_of_intrusion, intrusion_timestamp, '", "Date_of_intrusion+1min", Step=1m')
+print("Table Settings: QUANTITIES= 13 (Target angular diamenter), 24 (Sun-Target-Observer ~PHASE angle)")
+print("Display/Output: default")
+print('')
+print('****************')
+print('Then proceed with the calculations in hirs_calc_intrusion_values.py')
+print("")
 #EOF

@@ -8,12 +8,21 @@ import numpy as np
 import pandas as pd
 import hirs_src as src
 import sys
+from typhon.physics import planck_wavenumber, radiance2planckTb
 
 print('\n**********')
 
 # read in the filepath (input-filename) of the file with the 
 # suspected intrusion given by the argument in the command line
 intrusion_file = sys.argv[1]
+
+# read in angular diam[arcsec] given by the second argument in the command line
+ang_diam = sys.argv[2]
+#conversion from arcsec to deg
+ang_diam = float(ang_diam)/3600
+
+# read in phase angle[deg] given by the third argument in the command line
+phase_angle = sys.argv[3]
 
 # retrieve date of the intrusion out of the input-filename 
 # string to use it in the output-filename
@@ -136,25 +145,24 @@ for j in range(0,len(CHANNELS)):
 # get 3D position of the satellite
 longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 
-### Save data to csv file ###
-
 # build dictionary with calculated data
 data = {
     'channel': CHANNELS,
-    'central_wavenumber' : ch_central_waves,
-    'fov': fov,
+    'central_wavenumber[1/cm]' : ch_central_waves,
+    'fov[deg]': fov,
+    'longitude[deg]': longitude.tolist(),
+    'latitude[deg]': latitude.tolist(),
+    'altitude[km]': altitude.tolist(),
     'intrusion_scan_range': intrusion_range_all,
-    'bb_temp_mean': round(bb_temp_mean,4),
-    'bb_temp_std': round(bb_temp_std,4),
+    'bb_temp_mean[K]': round(bb_temp_mean,4),
+    'bb_temp_std[K]': round(bb_temp_std,4),
     'moon_counts_mean': moon_counts_mean_all,
     'moon_counts_std': moon_counts_std_all,
     'dsv_counts_mean': dsv_counts_mean_all,
     'dsv_counts_std': dsv_counts_std_all,
     'bb_counts_mean': bb_counts_mean_all,
     'bb_counts_std': bb_counts_std_all,
-    'longitude': longitude.tolist(),
-    'latitude': latitude.tolist(),
-    'altitude': altitude.tolist(),
+
 }
 
 # convert dictionary to panda dataframe
@@ -163,15 +171,33 @@ df = pd.DataFrame(data)
 # if blackbody radiance could be calculated  
 # insert the data into the dataframe at column 10 
 if len(bb_rad_all) != 0:
-    df.insert(10, "bb_rad", bb_rad_all, True)
+    df.insert(10, "bb_radiance[MJy/sr]", bb_rad_all, True)
+
+#add ang-diam[deg] and phase-angle[deg] to df
+df["ang_diam[deg]"]=ang_diam
+df["phase_angle[deg]"]= phase_angle
+
+#calc slope
+df["slope"] = np.divide(df["bb_radiance[MJy/sr]"],(df["bb_counts_mean"]-df["dsv_counts_mean"]))
+df["slope_sigma"] = np.divide(df["slope"]*np.sqrt(df["bb_counts_std"]**2+df["dsv_counts_std"]**2),(df["bb_counts_mean"]-df["dsv_counts_mean"]))
+
+#calc radiance
+df["radiance[MJy/sr]"]=np.divide((df["bb_radiance[MJy/sr]"]+df["slope"]*(df["moon_counts_mean"]-df["bb_counts_mean"])),(df["ang_diam[deg]"]**2))*(df["fov[deg]"]**2)/0.97
+df["radiance_sigma[MJy/sr]"]=100*np.sqrt(np.divide(((np.divide(df["slope_sigma"],df["slope"]))**2+((df["bb_counts_std"])**2+(df["moon_counts_std"])**2)),(df["bb_counts_mean"]-df["moon_counts_mean"])**2))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"]))
+
+#speed of light [m/s]
+co = 2.9979245e+08
+
+#calc TB
+df["brightness_temp[K]"] = radiance2planckTb((co*df["central_wavenumber[1/cm]"]*1E02),(df["radiance[MJy/sr]"]*1E-20))
 
 # set path to which the output csv file should be saved to
 # default path: local dircetory
-PATH = ''
+PATH = 'moon_intrusion_calculations_output/'
 FILENAME = f'hirs_moon_intrusion_{SATELLITE}_{date_of_intrusion}_{intrusion_timestamp}_calculations.csv'
 
 # convert dataframe to csv and save it 
-df = df.set_index('channel')
+df.set_index("channel", inplace=True)
 df.to_csv(PATH+FILENAME)
 
 print('')
@@ -180,17 +206,6 @@ print('')
 print(df)
 print('')
 print(f'Output saved to:    {PATH+FILENAME}')
-print('****************')
-print('')
-print("Now go to Horizon webpage https://ssd.jpl.nasa.gov/horizons.cgi and get the angular diameter and the phase angle of the moon.")
-print('')
-print("You will need the following input variables:")
-print("Ephemeris Type: OBSERVER")
-print("Target Body: Moon[Luna][301]")
-print("Observer Location: Topocentric (lon, lat, alt): ", (df.longitude[1], df.latitude[1], df.altitude[1]))
-print('Time span: Date of intrusion "',date_of_intrusion, intrusion_timestamp, '", "Date_of_intrusion+1min", Step=1m')
-print("Table Settings: QUANTITIES= 13 (Target angular diamenter), 24 (Sun-Target-Observer ~PHASE angle)")
-print("Display/Output: default")
 print('****************')
 print("")
 #EOF

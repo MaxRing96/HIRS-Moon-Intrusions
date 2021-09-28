@@ -1,7 +1,7 @@
 import numpy as np
 import typhon
 import typhon.datasets.tovs
-from typhon.physics import planck_wavenumber, radiance2planckTb
+
 
 # set up the fitting hirs data handler (for HIRS2, HIRS3 or HIRS4)
 # for given satellite name
