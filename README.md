@@ -35,10 +35,20 @@ An example plot is shown here:
   
 <img width="827" alt="Screenshot 2021-08-03 at 13 18 02" src="https://user-images.githubusercontent.com/62293752/128007461-29949e16-a0da-4780-9fe3-a3e4aa9c55e2.png">
 
-## 3) hirs_calc_intrusion_values.py
-If the ranges of the moon intrusion are adjusted for every channel in *config_intr_scan_ranges.txt*, this script can be used to calculate some quantities of the moon intrusion, which are necessary for further investigation. For the calculation of the radiance of the blackbody-target of the satellite, additional information is needed - The central wavelengths and correction coefficients for every channel and every satellite. These are provided in the folder *meta_files*. If there is no such meta file provided for the choosen satellite, the script will raise a warning but will still calculate all the other values. Only the blackbody radiance will be left out then. The calculated values are saved to a csv file with the name *hirs_moon_intrusion_<SATELLITE>_<DATE_OF_INTRUSION>_<INTRUSION_TIMESTAMP>_calculations.csv* (see example below). To run the script type in the command line:
+## 3) HORIZON Web-page
+Next step is to go to Horizon webpage https://ssd.jpl.nasa.gov/horizons.cgi and get the ANGULAR DIAMETER and the PHASE ANGLE of the moon.
+You will need the following input variables:
+Ephemeris Type: OBSERVER
+Target Body: Moon[Luna][301]
+Observer Location: Topocentric (lon, lat, alt)
+Time span: Date of intrusion, Date_of_intrusion+1min, Step=1minute')
+Table Settings: QUANTITIES= 13 (Target angular diamenter), 23 (Sun-Observer-Target), 24 (Sun-Target-Observer ~PHASE angle)
+Display/Output: default
+
+## 4) hirs_calc_intrusion_values.py
+If the ranges of the moon intrusion are adjusted for every channel in *config_intr_scan_ranges.txt*, this script can be used to calculate the quantities of the moon intrusion. For the calculation of the radiance of the blackbody-target of the satellite, additional information is needed - The central wavelengths and correction coefficients for every channel and every satellite. These are provided in the folder *meta_files*. If there is no such meta file provided for the choosen satellite, the script will raise a warning but will still calculate all the other values. Only the blackbody radiance will be left out then. The calculated values are saved to a csv file with the name *hirs_moon_intrusion_<SATELLITE>_<DATE_OF_INTRUSION>_<INTRUSION_TIMESTAMP>_calculations.csv* (see example below). To run the script type in the command line:
 ```
-python hirs_calc_intrusion_values.py <PATH-TO-TO-INTRUSION-FILE>
+python hirs_calc_intrusion_values.py <PATH-TO-TO-INTRUSION-FILE> <ANG_DIAM> <PHASE-ANGLE>
 ```
 The csv table containing the calculated values for the moon intrusion looks like this:
   
