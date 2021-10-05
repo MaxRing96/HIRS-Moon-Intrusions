@@ -22,7 +22,7 @@ With the last code-cell you can plot all the detected moon intrusions as plots l
   
 All the plots of the moon intrusions are saved under the directory *hirs_moon_intrusion_suspects_plots/* which will be created in your local directory if it doesn't exist already.
 
-To further investigate one of the detected intrusions, you just need the corresponding path to the HIRS file (PATH-TO-TO-INTRUSION-FILE) to continue with step 2) and 3).
+To further investigate one of the detected intrusions, you just need the corresponding path to the HIRS file (PATH-TO-TO-INTRUSION-FILE) to continue with step 2)- 4).
   
 ## 2) hirs_plot_all_channels.py
 It is useful to see the DSV-counts of the intrusion-scanline in all channels of the satellite. That is what the python script *hirs_plot_all_channels.py* does. It plots a matrix plot of the DSV intrusion-scanline for all channels (see example below). The textfile *config_intr_scan_ranges.txt* provides, for every single channel, the range in which is the suspected moon intrusion is visible according to the DSV counts. These ranges are shown as red lines (lower and upper boundary of the range) in the matrix plot and should be manualy adjusted in the textfile for every new moon intrusion. The complete scan range reaches from scanposition 10 to scanposition 56. The upper and lower boundary of the intrusion range can be selected in between this range. This step is important because also the calculations in 3) are done for these manualy defined ranges! The output plot is saved under the name *hirs_moon_intrusion_<SATELLITE>_<DATE_OF_INTRUSION>_<SCAN_TIME>_allchannels_dsv.pdf*
