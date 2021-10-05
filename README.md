@@ -58,6 +58,6 @@ python hirs_calc_intrusion_values.py <PATH-TO-TO-INTRUSION-FILE> <ANG_DIAM> <PHA
 Example: python hirs_calc_intrusion_values.py /scratch/uni/u237/data/hirs/noaa15_hirs_2020/02/09/NSS.HIRX.NK.D20040.S0111.E0256.B1308081.GC.gz 1961.271 5.4418T
 ```
 The csv table containing the calculated values for the moon intrusion looks like this:
-  
-<img width="1097" alt="Screenshot 2021-08-03 at 13 19 14" src="https://user-images.githubusercontent.com/62293752/128007612-9453b708-b86b-4b6a-8e1e-5b46edfde468.png">
+<img width="1873" alt="Bildschirmfoto 2021-10-05 um 16 16 25" src="https://user-images.githubusercontent.com/90314017/136042808-543a3a5f-077d-43f2-ab65-ec88b0326d0c.png">
+
    
