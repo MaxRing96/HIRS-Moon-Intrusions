@@ -183,7 +183,7 @@ df["slope_sigma"] = np.divide(df["slope"]*np.sqrt(df["bb_counts_std"]**2+df["dsv
 
 #calc radiance
 df["radiance[MJy/sr]"]=np.divide((df["bb_radiance[MJy/sr]"]+df["slope"]*(df["moon_counts_mean"]-df["bb_counts_mean"])),(df["ang_diam[deg]"]**2))*(df["fov[deg]"]**2)/0.97
-df["radiance_sigma[MJy/sr]"]=100*np.sqrt(np.divide(((np.divide(df["slope_sigma"],df["slope"]))**2+((df["bb_counts_std"])**2+(df["moon_counts_std"])**2)),(df["bb_counts_mean"]-df["moon_counts_mean"])**2))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"]))
+df["radiance_sigma[MJy/sr]"]=100*np.sqrt(np.divide(((np.divide(df["slope_sigma"],df["slope"]))**2+((df["bb_counts_std"])**2+(df["moon_counts_std"])**2)),((df["bb_counts_mean"]-df["moon_counts_mean"])**2)))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"]))
 
 #speed of light [m/s]
 co = 2.9979245e+08
@@ -200,11 +200,18 @@ FILENAME = f'hirs_moon_intrusion_{SATELLITE}_{date_of_intrusion}_{intrusion_time
 df.set_index("channel", inplace=True)
 df.to_csv(PATH+FILENAME)
 
+Tb_mean_lw = df.loc[0:6,"brightness_temp[K]"].mean()
+Tb_std_lw = df.loc[0:6,"brightness_temp[K]"].std()
+Tb_mean_sw = df.loc[12:15,"brightness_temp[K]"].mean()
+Tb_std_sw = df.loc[12:15,"brightness_temp[K]"].std()
 print('')
 print('Calculation results:')
 print('')
-print(df)
+print(np.round(df["brightness_temp[K]"],2))
 print('')
+print("Mean brightness Temperature LW Channel 2-7: ", np.round(Tb_mean_lw,2),"+/-", np.round(Tb_std_lw,2))
+print("Mean brightness Temperature SW Channel 13-16: ", np.round(Tb_mean_sw,2),"+/-", np.round(Tb_std_sw,2))
+print("Phase angle: ", df.loc[1,"phase_angle[deg]"])
 print(f'Output saved to:    {PATH+FILENAME}')
 print('****************')
 print("")
