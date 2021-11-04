@@ -60,6 +60,7 @@ except FileNotFoundError:
     
 # set up empty lists for data storage
 ch_central_waves = []
+ch_fov = []
 intrusion_range_all = []
 dsv_counts_mean_all = []
 dsv_counts_std_all = []
@@ -131,6 +132,7 @@ for j in range(0,len(CHANNELS)):
         corr_fac1 = sat_meta_data.loc[CHANNELS[j]]['correction_factor1']
         corr_fac2 = sat_meta_data.loc[CHANNELS[j]]['correction_factor2']
         fov = sat_meta_data.loc[CHANNELS[j]]['fov']
+        ch_fov.append(fov)
 
         bb_radiance = src.calc_bb_flux(ch_wavenumber*10**2,\
         [corr_fac1,corr_fac2],bb_temp_mean)
@@ -149,7 +151,7 @@ longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 data = {
     'channel': CHANNELS,
     'central_wavenumber[1/cm]' : ch_central_waves,
-    'fov[deg]': fov,
+    'fov[deg]': ch_fov,
     'longitude[deg]': longitude.tolist(),
     'latitude[deg]': latitude.tolist(),
     'altitude[km]': altitude.tolist(),
@@ -183,7 +185,7 @@ df["slope_sigma"] = np.divide(df["slope"]*np.sqrt(df["bb_counts_std"]**2+df["dsv
 
 #calc radiance
 df["radiance[MJy/sr]"]=np.divide((df["bb_radiance[MJy/sr]"]+df["slope"]*(df["moon_counts_mean"]-df["bb_counts_mean"])),(df["ang_diam[deg]"]**2))*(df["fov[deg]"]**2)/0.97
-df["radiance_sigma[MJy/sr]"]=100*np.sqrt(np.divide(((np.divide(df["slope_sigma"],df["slope"]))**2+((df["bb_counts_std"])**2+(df["moon_counts_std"])**2)),((df["bb_counts_mean"]-df["moon_counts_mean"])**2)))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"]))
+df["radiance_sigma[%]"]=abs(100*np.sqrt((np.divide(df["slope_sigma"],df["slope"]))**2+np.divide(((df["bb_counts_std"])**2+(df["moon_counts_std"])**2),((df["bb_counts_mean"]-df["moon_counts_mean"])**2)))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"])))
 
 #speed of light [m/s]
 co = 2.9979245e+08
