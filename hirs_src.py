@@ -7,18 +7,21 @@ import typhon.datasets.tovs
 # for given satellite name
 def get_hirs_reader(satellite_name):
     if satellite_name in ['tirosn','noaa06','noaa07','noaa08','noaa09','noaa10','noaa11','noaa12','noaa13','noaa14']:
+        instrument = "HIRS2"
         print('instrument: HIRS2')
         read_hirs = typhon.datasets.tovs.HIRS2(satname=satellite_name)
     elif satellite_name in ['noaa15','noaa16','noaa17']:
+        instrument = "HIRS3"
         print('instrument: HIRS3')
         read_hirs = typhon.datasets.tovs.HIRS3(satname=satellite_name)
-    elif satellite_name in ['noaa18','noaa19','metopa','metopb','metobc']:
+    elif satellite_name in ['noaa18','noaa19','metopa','metopb','metopc']:
+        instrument = "HIRS4"
         print('instrument: HIRS4')
         read_hirs = typhon.datasets.tovs.HIRS4(satname=satellite_name)
     else:
         print(f'**** {satellite_name} does not have HIRS on bord ****')
     
-    return read_hirs
+    return read_hirs, instrument
 
 # calculate the average of counts of given scanline and range 
 # of scanpositions as well as the standard deviation

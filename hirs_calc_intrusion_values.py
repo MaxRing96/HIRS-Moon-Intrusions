@@ -41,7 +41,7 @@ print(f'\nSatellite: {SATELLITE}')
 CHANNELS = np.arange(1,20)
 
 # set up hirs data handler
-read_hirs = src.get_hirs_reader(SATELLITE)
+read_hirs, instrument = src.get_hirs_reader(SATELLITE)
 
 # read in hirs-file of moon intrusion as xarray dataset
 (lines, extra) = read_hirs.read(intrusion_file)
@@ -60,6 +60,7 @@ except FileNotFoundError:
     
 # set up empty lists for data storage
 ch_central_waves = []
+ch_wavelength = []
 ch_fov = []
 intrusion_range_all = []
 dsv_counts_mean_all = []
@@ -129,6 +130,8 @@ for j in range(0,len(CHANNELS)):
 
         ch_wavenumber = sat_meta_data.loc[CHANNELS[j]]['wavenumber']
         ch_central_waves.append(ch_wavenumber)
+        lamb = float(ch_wavenumber)*10**(-4)
+        ch_wavelength.append(np.divide(1,lamb))
         corr_fac1 = sat_meta_data.loc[CHANNELS[j]]['correction_factor1']
         corr_fac2 = sat_meta_data.loc[CHANNELS[j]]['correction_factor2']
         fov = sat_meta_data.loc[CHANNELS[j]]['fov']
@@ -149,8 +152,11 @@ longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 
 # build dictionary with calculated data
 data = {
+    'satellite' : SATELLITE,
+    'instrument': instrument,
     'channel': CHANNELS,
     'central_wavenumber[1/cm]' : ch_central_waves,
+    'wavelength[micron]' : ch_wavelength ,
     'fov[deg]': ch_fov,
     'longitude[deg]': longitude.tolist(),
     'latitude[deg]': latitude.tolist(),
