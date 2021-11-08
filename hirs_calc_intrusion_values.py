@@ -152,6 +152,7 @@ longitude, latitude, altitude = src.get_position(ds,intrusion_timeindex)
 
 # build dictionary with calculated data
 data = {
+    'timestamp' : str(date_of_intrusion)+ " "+str(intrusion_timestamp),
     'satellite' : SATELLITE,
     'instrument': instrument,
     'channel': CHANNELS,
