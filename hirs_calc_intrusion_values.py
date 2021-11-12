@@ -192,14 +192,22 @@ df["slope_sigma"] = np.divide(df["slope"]*np.sqrt(df["bb_counts_std"]**2+df["dsv
 
 #calc radiance
 df["radiance[MJy/sr]"]=np.divide((df["bb_radiance[MJy/sr]"]+df["slope"]*(df["moon_counts_mean"]-df["bb_counts_mean"])),(df["ang_diam[deg]"]**2))*(df["fov[deg]"]**2)/0.97
-df["radiance_sigma[%]"]=abs(100*np.sqrt((np.divide(df["slope_sigma"],df["slope"]))**2+np.divide(((df["bb_counts_std"])**2+(df["moon_counts_std"])**2),((df["bb_counts_mean"]-df["moon_counts_mean"])**2)))*np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["dsv_counts_mean"]-df["bb_counts_mean"])))
+#sigma_slope = (np.divide((df["moon_counts_mean"]-df["bb_counts_mean"])*df["fov[deg]"]**2,0.97*df["ang_diam[deg]"]**2))**2*df["slope_sigma"]
+sigma_moon = np.divide(df["bb_radiance[MJy/sr]"]*df["fov[deg]"]**2,(df["bb_counts_mean"]-df["dsv_counts_mean"])*0.97*df["ang_diam[deg]"]**2)
+sigma_bb = sigma_moon*np.divide((df["dsv_counts_mean"]-df["moon_counts_mean"]),(df["bb_counts_mean"]-df["dsv_counts_mean"]))
+sigma_dsv = np.divide((df["moon_counts_mean"]-df["bb_counts_mean"]),(df["bb_counts_mean"]-df["dsv_counts_mean"]))
+
+sigma_fov = np.divide(2*df["fov[deg]"]*(df["bb_radiance[MJy/sr]"]+df["slope_sigma"]*df["moon_counts_mean"]-df["slope_sigma"]*df["bb_counts_mean"]),0.97*df["ang_diam[deg]"]**2)**2*0.01**2
+df["radiance_sigma[MJy/sr]"]= np.sqrt(sigma_moon**2*df['moon_counts_std']+(sigma_moon*sigma_dsv)**2*df['dsv_counts_std']+sigma_bb**2*df['bb_counts_std'])#+sigma_fov)
+df["radiance_sigma[%]"]=100*(np.divide(df["radiance_sigma[MJy/sr]"],df["radiance[MJy/sr]"]))
 
 #speed of light [m/s]
 co = 2.9979245e+08
 
 #calc TB
-df["brightness_temp[K]"] = radiance2planckTb((co*df["central_wavenumber[1/cm]"]*1E02),(df["radiance[MJy/sr]"]*1E-20))
-
+df["T_b[K]"] = radiance2planckTb((co*df["central_wavenumber[1/cm]"]*1E02),(df["radiance[MJy/sr]"]*1E-20))
+r_sigma_max = radiance2planckTb((co*df["central_wavenumber[1/cm]"]*1E02),(df["radiance[MJy/sr]"]*1E-20+df["radiance_sigma[MJy/sr]"]*1E-20))
+df["T_B_sigma[K]"] = r_sigma_max - df["T_b[K]"]
 # set path to which the output csv file should be saved to
 # default path: local dircetory
 PATH = 'moon_intrusion_calculations_output/'
@@ -209,14 +217,14 @@ FILENAME = f'hirs_moon_intrusion_{SATELLITE}_{date_of_intrusion}_{intrusion_time
 df.set_index("channel", inplace=True)
 df.to_csv(PATH+FILENAME)
 
-Tb_mean_lw = df.loc[0:6,"brightness_temp[K]"].mean()
-Tb_std_lw = df.loc[0:6,"brightness_temp[K]"].std()
-Tb_mean_sw = df.loc[12:15,"brightness_temp[K]"].mean()
-Tb_std_sw = df.loc[12:15,"brightness_temp[K]"].std()
+Tb_mean_lw = df.loc[0:6,"T_b[K]"].mean()
+Tb_std_lw = df.loc[0:6,"T_b[K]"].std()
+Tb_mean_sw = df.loc[12:15,"T_b[K]"].mean()
+Tb_std_sw = df.loc[12:15,"T_b[K]"].std()
 print('')
 print('Calculation results:')
 print('')
-print(np.round(df["brightness_temp[K]"],2))
+print(np.round(df["T_b[K]"],2))
 print('')
 print("Mean brightness Temperature LW Channel 2-7: ", np.round(Tb_mean_lw,2),"+/-", np.round(Tb_std_lw,2))
 print("Mean brightness Temperature SW Channel 13-16: ", np.round(Tb_mean_sw,2),"+/-", np.round(Tb_std_sw,2))
