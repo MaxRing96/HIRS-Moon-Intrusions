@@ -33,7 +33,7 @@ except FileNotFoundError:
 # set up data handler for hirs 
 SATELLITE = str(intrusion_file[28:34])
 print('\nSatellite: ',SATELLITE)
-read_hirs = src.get_hirs_reader(SATELLITE)
+read_hirs, instrument = src.get_hirs_reader(SATELLITE)
 
 
 # read in hirs file of moon intrusion as xarray dataset
